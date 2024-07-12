@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Шибениця</title>
+    <style>
+        #heading {
+            position: absolute;
+            left: 700px;
+            top: 20px;
+        }
+        #guessedWord {
+            position: absolute;
+            left: 700px;
+            top: 300px;
+        }
+        #input {
+            position: absolute;
+            left: 700px;
+            top: 400px;
+        }
+        #attempts {
+            position: absolute;
+            left: 700px;
+            top: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="heading">Відгадай слово!</h1>
+    <h1 id="guessedWord">_</h1>
+    <h2 id="attempts">Залишилося спроб:</h2>
+    <div id="input">
+        <input type="text" id="guessInput" maxlength="1">
+        <button id="submitGuess">ок</button>
+    </div>
+    <script>
+        var слова = ["яблуко", "сонце", "літо", "зима", "кіт", "пес", "дощ", "вода"];
+        var слово = слова[Math.floor(Math.random() * слова.length)];
+        var спроби = слово.length + 3;
+        var відповіді = [];
+        var перемога = false;
+        var поразка = false;
+        var рестарт = function () {
+        var рестартЕлемент = document.createElement('button');
+        рестартЕлемент.innerHTML = 'Рестарт';
+        рестартЕлемент.style.position = 'absolute';
+        рестартЕлемент.style.left = '700px';
+        рестартЕлемент.style.top = '500px';
+        рестартЕлемент.onclick = function () {
+        location.reload();
+        };
+        document.body.appendChild(рестартЕлемент);
+        };
+
+        for (var i = 0; i < слово.length; i++) {
+            відповіді[i] = "_";
+        }
+        var невідгадано = слово.length;
+
+        function updateGuessedWord() {
+            document.getElementById('guessedWord').textContent = відповіді.join(' ');
+            document.getElementById('attempts').textContent = 'Залишилося спроб: ' + спроби;
+        }
+
+        function handleGuess() {
+            if (!перемога && !поразка) {var відповідь = document.getElementById('guessInput').value.toLowerCase();
+            document.getElementById('guessInput').value = '';
+            if (відповідь === "") {
+                alert("Введіть 1 літеру");
+                return;
+            }
+            var correctGuess = false;
+            for (var j = 0; j < слово.length; j++) {
+                if (слово[j] === відповідь) {
+                    if (відповіді[j] === "_") {
+                        відповіді[j] = відповідь;
+                        невідгадано--;
+                        correctGuess = true;
+                    }
+                }
+            }
+            if (!correctGuess) {
+                спроби--;
+            }
+            updateGuessedWord();
+            if (невідгадано == 0) {
+                alert("Ви відгадали слово! Слово було: " + слово);
+                перемога = true;
+                рестарт();
+            } else if (спроби == 0) {
+                alert("Ви програли! Слово було: " + слово);
+                поразка = true;
+                рестарт();
+            }
+        }}
+
+        document.getElementById('submitGuess').addEventListener('click', handleGuess);
+
+        document.addEventListener('keydown', function(event) {
+        if (event.keyCode == 13) {
+        handleGuess();
+        }
+        });
+
+        updateGuessedWord();
+    </script>
+</body>
+</html>
+
